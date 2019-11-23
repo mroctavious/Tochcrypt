@@ -1,17 +1,16 @@
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
-#include <libgen.h>
-#include <iostream>
-#include "Tochfile.h"
-
-
 #ifndef MOD
 #define MOD 256
 #endif
 
 #ifndef HILL_CIPHER
 #define HILL_CIPHER
+
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <libgen.h>
+#include <iostream>
+#include "Tochkey.h"
 
 __global__ void matrixMultiplication( unsigned char *newVect, int *key, unsigned char *resultado, int keySize );
 
@@ -39,9 +38,12 @@ public:
 
     unsigned char create_output( std::string output_str );
 
-    void apply_key( int *key_vector, Tochfile&  );
-    void set_key_size(int size);
+    void apply_key( int *key_vector, Tochkey&  );
+    void encrypt( Tochkey &tochkey  );
+    void decrypt( Tochkey &tochkey  );
 
+    void set_key_size(int size);
+    void set_buffer_size(size_t size);
     void read_file( char *path_to_file );
 
     HillCipher(  );

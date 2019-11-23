@@ -23,7 +23,6 @@ MatrixKey::MatrixKey( int *custom_key, int custom_key_size, int custom_mod ){
     memcpy(key, custom_key, sizeof(int)*custom_key_size*custom_key_size);
     mod = custom_mod;
     key_size = custom_key_size;
-
 }
 
 void MatrixKey::inverse(){

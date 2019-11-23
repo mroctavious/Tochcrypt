@@ -43,7 +43,7 @@ __global__ void matrixMultiplication( unsigned char *newVect, int *key, unsigned
 
     //El resultado se almacenara en la posicion que indique su propia indexaxion, antes de almacenarlo se aplicara un mod 256
     resultado[blockIdx.x*blockDim.x+threadIdx.x] = (suma % 256);
-
+    
     }
 }
 
@@ -79,8 +79,11 @@ int HillCipher::next_multiple(int bytes){
     else
         return ( key_size - ( bytes % key_size ) ) + bytes;
 }
+void HillCipher::set_buffer_size(size_t size){
+    buffer_size = size;
+}
 
-void HillCipher::apply_key( int *key_vector, Tochfile &tochkey  ){
+void HillCipher::apply_key( int *key_vector, Tochkey &tochkey  ){
     //CUDA CONFIG
     dim3 dimBlock( key_size, key_size );
     copy_key(key_vector);
@@ -111,6 +114,74 @@ void HillCipher::apply_key( int *key_vector, Tochfile &tochkey  ){
     output=NULL;
 
 }
+
+
+void HillCipher::encrypt( Tochkey &tochkey  ){
+    //CUDA CONFIG
+    dim3 dimBlock( key_size, key_size );
+    copy_key(tochkey.main_key);
+    cudaDeviceSynchronize();
+    size_t bytes_readed; 
+    while( (bytes_readed=next_chunk()) > 0 ){
+        if( bytes_readed != buffer_size )
+            cudaMemset( chunk+bytes_readed, 0, buffer_size-bytes_readed);
+
+        bytes_readed=next_multiple(bytes_readed);
+        dim3 dimGrid(bytes_readed/key_size);
+
+        //Ejecutar el kernel paralelo
+        matrixMultiplication << <dimGrid, dimBlock, sizeof(int)*(key_size*key_size)>> >( chunk, key, newChunk, key_size );
+        cudaDeviceSynchronize();
+        if( bytes_readed != buffer_size ){
+            cudaMemset( newChunk+bytes_readed, 0, buffer_size-bytes_readed);
+        }
+
+        //Write back to file
+        //printf("Writing to file...\n");
+        //printf("Last byte: %d %d     bytes read:%zu\n", chunk[bytes_readed-1], newChunk[bytes_readed-1], bytes_readed);
+        fwrite ( newChunk , sizeof(unsigned char), bytes_readed, output);
+    }
+    fclose(output);
+    clear_chunks();
+    output=NULL;
+
+}
+
+
+void HillCipher::decrypt( Tochkey &tochkey  ){
+    //CUDA CONFIG
+    dim3 dimBlock( key_size, key_size );
+    copy_key(tochkey.main_key);
+    cudaDeviceSynchronize();
+    size_t bytes_readed; 
+    size_t total_bytes_readed=0;
+    unsigned char offset=tochkey.enc_size-tochkey.org_size;
+    while( (bytes_readed=next_chunk()) > 0 ){
+        if( bytes_readed != buffer_size )
+            cudaMemset( chunk+bytes_readed, 0, buffer_size-bytes_readed);
+
+        dim3 dimGrid(bytes_readed/key_size);
+
+        //Ejecutar el kernel paralelo
+        matrixMultiplication << <dimGrid, dimBlock, sizeof(int)*(key_size*key_size)>> >( chunk, key, newChunk, key_size );
+        cudaDeviceSynchronize();
+        if( bytes_readed != buffer_size ){
+            cudaMemset( newChunk+bytes_readed, 0, buffer_size-bytes_readed);
+        }
+        total_bytes_readed+=bytes_readed;
+        //Write back to file
+        if( total_bytes_readed > tochkey.org_size )
+            fwrite ( newChunk , sizeof(unsigned char), bytes_readed-offset, output);
+        else
+            fwrite ( newChunk , sizeof(unsigned char), bytes_readed, output);
+
+    }
+    fclose(output);
+    clear_chunks();
+    output=NULL;
+
+}
+
 void HillCipher::set_key_size(int size){
     key_size=size;
 }

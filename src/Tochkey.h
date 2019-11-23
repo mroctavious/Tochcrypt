@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef TOCH_FILE
-#define TOCH_FILE
+#ifndef TOCH_KEY
+#define TOCH_KEY
 
 #define MAX_FILENAME_CHARS 256
-class Tochfile
+class Tochkey
 {
 public:
     char name[256];
@@ -18,13 +18,14 @@ public:
     FILE *file_ptr;
     int *main_key;
 
-    Tochfile(int *key, int key_size, std::string filename, size_t encryptedSize, int originalSize );
-    
-    Tochfile(std::string filepath);
+    Tochkey(int *key, int key_size, std::string filename, size_t encryptedSize, int originalSize );
+    ~Tochkey();
+    Tochkey(std::string filepath);
 
     void close();
-
+    void update_key(int* key, int size, int modulus);
     void print();
+    void printHeader();
 
     void write(unsigned char *values, int size);
 
