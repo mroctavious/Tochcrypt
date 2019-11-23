@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include <libgen.h>
 #include <iostream>
+#include "Tochfile.h"
+
+
+#ifndef MOD
+#define MOD 256
+#endif
 
 #ifndef HILL_CIPHER
 #define HILL_CIPHER
@@ -19,7 +25,11 @@ public:
     unsigned char *newChunk;
     int *key;
     int key_size;
-    
+    size_t file_size;
+
+    // find the file size
+    size_t getFileSize(FILE* inFile);
+    int next_multiple(int bytes);
 
     size_t next_chunk();
 
@@ -29,7 +39,7 @@ public:
 
     unsigned char create_output( std::string output_str );
 
-    void apply_key( int *key_vector  );
+    void apply_key( int *key_vector, Tochfile&  );
     void set_key_size(int size);
 
     void read_file( char *path_to_file );
@@ -47,15 +57,13 @@ public:
     
 
 private:
-    size_t file_size;
+    
     std::string filename;
     FILE *file;
     FILE *output;
-    // find the file size
-    size_t getFileSize(FILE* inFile);
+
 
     void set_defaults();
-    
 };
 
 #endif

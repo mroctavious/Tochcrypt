@@ -16,6 +16,15 @@ void MatrixKey::createKey(){
     key=key2Dto1D(keyMatrix, key_size);
 
 }
+MatrixKey::MatrixKey( int *custom_key, int custom_key_size, int custom_mod ){
+    key = (int*)malloc(sizeof(int)*custom_key_size*custom_key_size);
+
+    //Copiar llave a key
+    memcpy(key, custom_key, sizeof(int)*custom_key_size*custom_key_size);
+    mod = custom_mod;
+    key_size = custom_key_size;
+
+}
 
 void MatrixKey::inverse(){
     int **matrixKey=key1Dto2D(key, key_size);

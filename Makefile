@@ -1,5 +1,5 @@
 #Main Config
-HEADERS = MatrixKey.h #HillCipher.cu
+HEADERS = MatrixKey.h Tochfile.h#HillCipher.cu
 CC=g++
 NVCC=nvcc
 CFLAGS=-I.
@@ -8,7 +8,7 @@ OBJ_DIR=build/objects
 SRC_DIR=src
 
 #Objets to create
-OBJS=$(OBJ_DIR)/main.o $(OBJ_DIR)/MatrixKey.o $(OBJ_DIR)/HillCipher.o
+OBJS=$(OBJ_DIR)/main.o $(OBJ_DIR)/MatrixKey.o $(OBJ_DIR)/HillCipher.o $(OBJ_DIR)/Tochfile.o
 
 ##Main program
 all: Tochcrypt
@@ -25,9 +25,12 @@ $(OBJ_DIR)/HillCipher.o: Directories
 $(OBJ_DIR)/MatrixKey.o: Directories
 	$(CC) -c -std=c++11 -o $(OBJ_DIR)/MatrixKey.o $(SRC_DIR)/MatrixKey.cpp
 
+$(OBJ_DIR)/Tochfile.o: Directories
+	$(CC) -c -std=c++11 -o $(OBJ_DIR)/Tochfile.o $(SRC_DIR)/Tochfile.cpp
+
 $(OBJ_DIR)/main.o: Directories
 	$(NVCC) -c -std=c++11 -o $(OBJ_DIR)/main.o $(SRC_DIR)/main.cu
 
-Tochcrypt: $(OBJS) $(OBJ_DIR)/HillCipher.o
+Tochcrypt: $(OBJS)
 	$(NVCC) -o Tochcrypt -std=c++11 $(OBJS)
 

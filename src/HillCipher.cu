@@ -73,18 +73,24 @@ unsigned char HillCipher::create_output( std::string output_str ){
     return 0;
 }
 
-void HillCipher::apply_key( int *key_vector  ){
+int HillCipher::next_multiple(int bytes){
+    if ( bytes % key_size == 0 )
+        return bytes;
+    else
+        return ( key_size - ( bytes % key_size ) ) + bytes;
+}
+
+void HillCipher::apply_key( int *key_vector, Tochfile &tochkey  ){
     //CUDA CONFIG
     dim3 dimBlock( key_size, key_size );
-
     copy_key(key_vector);
     cudaDeviceSynchronize();
-    size_t bytes_readed;
+    size_t bytes_readed; 
     while( (bytes_readed=next_chunk()) > 0 ){
         if( bytes_readed != buffer_size ){
             cudaMemset( chunk+bytes_readed, 0, buffer_size-bytes_readed);
         }
-
+        bytes_readed=next_multiple(bytes_readed);
         dim3 dimGrid(bytes_readed);
 
         //Ejecutar el kernel paralelo
@@ -93,11 +99,13 @@ void HillCipher::apply_key( int *key_vector  ){
         if( bytes_readed != buffer_size ){
             cudaMemset( newChunk+bytes_readed, 0, buffer_size-bytes_readed);
         }
+
         //Write back to file
         printf("Writing to file...\n");
-        if( bytes_readed != buffer_size ) printf("Last byte: %d %d     bytes read:%d\n", chunk[bytes_readed-1], newChunk[bytes_readed-1], bytes_readed);
-        fwrite (newChunk , sizeof(unsigned char), bytes_readed, output);
+        if( bytes_readed != buffer_size ) printf("Last byte: %d %d     bytes read:%zu\n", chunk[bytes_readed-1], newChunk[bytes_readed-1], bytes_readed);
+        tochkey.write(newChunk, bytes_readed);
     }
+    tochkey.close();
     fclose(output);
     clear_chunks();
     output=NULL;
@@ -185,7 +193,16 @@ void HillCipher::set_defaults(){
     //buffer_size = 32;
     file=NULL;
     chunk=NULL;
-    mod=256;
+    mod=MOD;
     key_size=8;
 
 }
+
+/*Super formula nextInt = (cM - (tamAudio % cM)) + tamAudio;
+<<El comun multiplo esta dado por cM = (tamAudio * tamLlave)>> */
+size_t nextInt(int vect_size, int key_size)
+{
+    int cm=vect_size * key_size;
+    return (cm - (vect_size % cm)) + vect_size;
+}
+   ;

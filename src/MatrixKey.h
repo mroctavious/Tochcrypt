@@ -17,7 +17,11 @@ public:
     int *key;
     int key_size;
     int mod;
+    //Nueva llave
     MatrixKey(int, int);
+
+    //Crear llave a partir de nueva llave
+    MatrixKey( int *custom_key, int custom_key_size, int mod );
 
     void createKey();
 
