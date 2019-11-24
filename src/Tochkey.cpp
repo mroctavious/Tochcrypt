@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
-#include "Tochfile.h"
+#include "Tochkey.h"
 
 #ifndef MOD
 #define MOD 256
@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Tochfile::Tochfile(int *key, int key_size, string filename, size_t encryptedSize, int originalSize ){
+Tochkey::Tochkey(int *key, int key_size, string filename, size_t encryptedSize, int originalSize, string out_name ){
     //Preparando el encabezado del archivo
     strcpy(header.filename, filename.c_str());
     header.key_size = key_size;
@@ -17,15 +17,28 @@ Tochfile::Tochfile(int *key, int key_size, string filename, size_t encryptedSize
     header.encrypted_size = encryptedSize;
     header.mod = MOD;
 
+    //Copiando datos del encabezado a la clase
+    strcpy(name, header.filename);
+
+    keySize = header.key_size;
+    org_size = header.original_size;
+    enc_size = header.encrypted_size;
+    mod = header.mod;
+    main_key = (int*)malloc(sizeof(int)*keySize*keySize);
+    memcpy(main_key, key, sizeof(int)*keySize*keySize);
+
     //Abrir archivo
-    filename = filename + ".key";
-    file_ptr=fopen(filename.c_str(), "wb" );
+    string out = out_name + ".key";
+    file_ptr=fopen(out.c_str(), "wb" );
     if( file_ptr != NULL ){
+        
         //Escribir el encabezado
         fwrite(&header, sizeof(header), 1, file_ptr);
 
         //Escribir la llave
         fwrite(key, sizeof(int), key_size*key_size, file_ptr);
+
+        fclose(file_ptr);
     }
     else{
         printf("Couldn't create output file %s.\n", filename.c_str());
@@ -33,19 +46,40 @@ Tochfile::Tochfile(int *key, int key_size, string filename, size_t encryptedSize
     }
     
 }
+Tochkey::~Tochkey(){
+    if( file_ptr != NULL ){
+        fclose(file_ptr);
+        file_ptr = NULL;
+    }
 
-Tochfile::Tochfile(string filepath){
+    if( main_key != NULL ){
+        free(main_key);
+    }
+}
+
+Tochkey::Tochkey(string filepath){
     readfile(filepath);
 }
 
-void Tochfile::close(){
+void Tochkey::close(){
     if( file_ptr != NULL ){
         fclose(file_ptr);
         file_ptr = NULL;
     }    
 }
 
-void Tochfile::print()
+void Tochkey::update_key( int *key, int key_size, int modulus ){
+    if( main_key != NULL )
+        free(main_key);
+    main_key = (int*)malloc(sizeof(int)*key_size*key_size);
+
+    //Copiar llave a key
+    memcpy(main_key, key, sizeof(int)*key_size*key_size);
+    mod = modulus;
+    keySize = key_size;
+}
+
+void Tochkey::print()
 {
     printf("Filename:%s\n", name);
     printf("Original Size:%zu\n", org_size);
@@ -55,12 +89,22 @@ void Tochfile::print()
     printV(main_key, keySize);
 }
 
-void Tochfile::write(unsigned char *values, int size)
+void Tochkey::printHeader()
+{
+    printf("Filename:%s\n", header.filename);
+    printf("Original Size:%zu\n", header.original_size);
+    printf("Encryted Size:%zu\n", header.encrypted_size);
+    printf("Key Size:%d\n", header.key_size);
+    printf("Mod:%d\n", header.mod);
+    //printV(main_key, keySize);
+}
+
+void Tochkey::write(unsigned char *values, int size)
 {
     fwrite(values, sizeof(unsigned char), size, file_ptr); 
 }
 
-void Tochfile::readfile(string filepath)
+void Tochkey::readfile(string filepath)
 {
     file_ptr=fopen(filepath.c_str(), "rb" );
     if( file_ptr != NULL ){
@@ -81,7 +125,7 @@ void Tochfile::readfile(string filepath)
     }
 }
 
-void Tochfile::printV( int *vect, int size )
+void Tochkey::printV( int *vect, int size )
 {
     int i=0, j=0;
     for( i=0; i<size; ++i )

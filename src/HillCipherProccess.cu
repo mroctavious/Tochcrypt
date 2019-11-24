@@ -13,6 +13,7 @@ HillCipherProccess::HillCipherProccess(int mod){
 int HillCipherProccess::encrypt( char *input_filename, std::string output_filename ){
     //Create Random compatible key
     MatrixKey modularMatrix(KEY_SIZE, modulus);
+    modularMatrix.createKey();
 
     //Open file
     HillCipher hc( input_filename );
@@ -21,8 +22,9 @@ int HillCipherProccess::encrypt( char *input_filename, std::string output_filena
     size_t org_size=hc.file_size;
     size_t enc_size=hc.next_multiple(org_size);
 
+    //std::string key_filename(
     //Save the key file
-    Tochkey key( modularMatrix.key, KEY_SIZE, output_filename, enc_size, org_size );
+    Tochkey key( modularMatrix.key, KEY_SIZE, input_filename, enc_size, org_size, output_filename );
 
     //Creates file to write output data(encrypted data)
     if( hc.create_output(output_filename) != 0 ){

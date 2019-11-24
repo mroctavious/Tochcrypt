@@ -18,7 +18,7 @@ public:
     FILE *file_ptr;
     int *main_key;
 
-    Tochkey(int *key, int key_size, std::string filename, size_t encryptedSize, int originalSize );
+    Tochkey(int *key, int key_size, std::string filename, size_t encryptedSize, int originalSize, std::string out_name );
     ~Tochkey();
     Tochkey(std::string filepath);
 

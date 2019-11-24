@@ -5,10 +5,13 @@
 
 static void show_usage(std::string name)
 {
-    std::cerr << "Usage: " << name << " <option(s)> SOURCES"
+    std::cerr << "Tochcrypt\n"
+              << "Usage: " << name << " <option(s)> FILE\n"
               << "Options:\n"
               << "\t-h,--help\t\tShow this help message\n"
-              << "\t-e,--destination DESTINATION\tSpecify the destination path"
+              << "\t-e,--encrypt INPUT_FILE\tSpecify the file path\n"
+              << "\t-d,--decrypt ENCRYPTED_FILE\tSpecify the file path\n"
+              << "\t-k,--key KEY_FILE\tSpecify the file path\n"
               << std::endl;
 }
 
@@ -77,11 +80,10 @@ int main( int argc, char **argv ){
     if( encrypt_option && output_option ){
         
         HillCipherProccess HC;
-        std::string out(output_file);
-        printf("%s   %s\n", input_file, out.c_str());
+        std::string out=output_file;
         HC.encrypt(input_file, out);
     }
-    else if( decrypt_option && key_option && encrypt_option ){
+    else if( decrypt_option && key_option && output_option ){
         HillCipherProccess HC;
         std::string out(output_file);
         std::string key_str(key_file);
