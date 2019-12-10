@@ -6,6 +6,10 @@ MatrixKey::MatrixKey( int sqr_size, int modulus ){
     mod=modulus;
 }
 
+MatrixKey::~MatrixKey( ){
+    if ( key != NULL ) free(key);
+}
+
 void MatrixKey::createKey(){
     if( key != NULL )
         free(key);
@@ -278,7 +282,7 @@ int *MatrixKey::getInverseKey( int **key, int size, int mod )
     for( i=0; i<size; i++ )
         free(coFact[i]);
     free(coFact);
-
+    freeMat(key, size);
     return inverseMatrix;
 }
 
@@ -367,20 +371,23 @@ void MatrixKey::freeMat( int **key, int size )
 }
 
 //Funcion que aplica la matriz A a la llave B
-void MatrixKey::matrixMult8(long long unsigned int *C, uint8_t *B, int *A, int N )
+void MatrixKey::matrixMult8(  uint8_t *A, int *B, uint8_t *C, int N )
 {
     int i,j;
-
-    memset(C, 0, sizeof(int) * N );
+    int tmp[N]={0};
+    //memset(tmp, 0, sizeof(int) * N);
 
     //Multiply the key
     for(i = 0; i < N; ++i)
     {
         for(j = 0; j < N; ++j)
         {
-                C[i] += (int)A[i*N+j] * B[j];
+                tmp[i] += (int)A[j] * B[i*N+j];
         }
+        C[i]=tmp[i]%mod;
     }
+
+
 }
 
 //Funcion que aplica la matriz A a la llave B

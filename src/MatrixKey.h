@@ -20,8 +20,14 @@ public:
     //Nueva llave
     MatrixKey(int, int);
 
+    //Destructor
+    ~MatrixKey();
+
     //Crear llave a partir de nueva llave
     MatrixKey( int *custom_key, int custom_key_size, int mod );
+
+    //Funcion que aplica la matriz A a la llave B
+    void matrixMult8(  uint8_t *A, int *B, uint8_t *C, int N );
 
     void createKey();
 
@@ -75,8 +81,7 @@ private:
 
     void freeMat( int **key, int size );
 
-    //Funcion que aplica la matriz A a la llave B
-    void matrixMult8(long long unsigned int *C, uint8_t *B, int *A, int N );
+    
 
     //Funcion que aplica la matriz A a la llave B
     void matrixMult16(long long unsigned int *C, uint16_t *B, int *A, int N, int mod );

@@ -11,8 +11,8 @@
 #include <libgen.h>
 #include <iostream>
 #include "Tochkey.h"
+#include "MatrixKey.h"
 
-__global__ void matrixMultiplication( unsigned char *newVect, int *key, unsigned char *resultado, int keySize );
 
 
 class HillCipher{

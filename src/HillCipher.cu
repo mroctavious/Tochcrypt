@@ -195,7 +195,6 @@ void HillCipher::read_file( char *path_to_file ){
         fprintf( stderr, "Unable to open file: %s\n", path_to_file );
         return;
     }
-    printf("Reading %s\n",path_to_file);
     file = file_ptr;
     file_size = getFileSize(file);
     filename = std::string(basename(path_to_file));

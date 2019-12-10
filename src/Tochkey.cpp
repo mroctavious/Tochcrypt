@@ -11,6 +11,7 @@ using namespace std;
 
 Tochkey::Tochkey(int *key, int key_size, string filename, size_t encryptedSize, int originalSize, string out_name ){
     //Preparando el encabezado del archivo
+    memset(&header, 0, sizeof(TFile));
     strcpy(header.filename, filename.c_str());
     header.key_size = key_size;
     header.original_size = originalSize;
@@ -36,9 +37,10 @@ Tochkey::Tochkey(int *key, int key_size, string filename, size_t encryptedSize, 
         fwrite(&header, sizeof(header), 1, file_ptr);
 
         //Escribir la llave
-        fwrite(key, sizeof(int), key_size*key_size, file_ptr);
+        fwrite(main_key, sizeof(int), key_size*key_size, file_ptr);
 
         fclose(file_ptr);
+        file_ptr=NULL;
     }
     else{
         printf("Couldn't create output file %s.\n", filename.c_str());
@@ -54,6 +56,7 @@ Tochkey::~Tochkey(){
 
     if( main_key != NULL ){
         free(main_key);
+        main_key=NULL;
     }
 }
 
@@ -69,8 +72,10 @@ void Tochkey::close(){
 }
 
 void Tochkey::update_key( int *key, int key_size, int modulus ){
-    if( main_key != NULL )
+    if( main_key != NULL ){
         free(main_key);
+        main_key=NULL;
+    }
     main_key = (int*)malloc(sizeof(int)*key_size*key_size);
 
     //Copiar llave a key
