@@ -289,7 +289,7 @@ int *MatrixKey::getInverseKey( int **key, int size, int mod )
 int **MatrixKey::getRandomKey( int **key, int size, int mod )
 {
     int i=0, j=0;
-    int tries=0;
+    //int tries=0;
     while( 1 )
     {
         for( i=0; i<size; ++i )
