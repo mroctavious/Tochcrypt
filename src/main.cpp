@@ -79,18 +79,20 @@ int main( int argc, char **argv ){
     //Do instructions depending with args
     if( encrypt_option && output_option ){
         
-        HillCipherProccess HC;
-        std::string out=output_file;
+        encrypt(input_file, output_file);
+        //HillCipherProccess HC;
+        //std::string out=output_file;
         
-        HC.encrypt(input_file, out);
+        //HC.encrypt(input_file, out);
         
         
     }
     else if( decrypt_option && key_option && output_option ){
-        HillCipherProccess HC;
-        std::string out(output_file);
-        std::string key_str(key_file);
-        HC.decrypt(input_file, key_str, out);
+        //HillCipherProccess HC;
+        //std::string out(output_file);
+        //std::string key_str(key_file);
+        //HC.decrypt(input_file, key_str, out);
+        decrypt(input_file, key_file, output_file);
     }
     else{
         printf("Wrong usage...");

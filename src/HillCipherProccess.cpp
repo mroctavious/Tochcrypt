@@ -1,5 +1,19 @@
 #include "HillCipherProccess.h"
+extern "C"{
+    void encrypt( char *input_file, char *output_file ){
+        printf("ARGS: <%s>   <%s> \n", input_file, output_file);
+        HillCipherProccess HC;
+        std::string out=output_file;
+        HC.encrypt(input_file, out);
+    }
 
+    void decrypt(char *input_file, char *key_file, char *output_file){
+        HillCipherProccess HC;
+        std::string out(output_file);
+        std::string key_str(key_file);
+        HC.decrypt(input_file, key_str, out);
+    }
+}
 HillCipherProccess::HillCipherProccess(){
     modulus=256;
 }
