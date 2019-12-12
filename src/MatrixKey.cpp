@@ -374,8 +374,8 @@ void MatrixKey::freeMat( int **key, int size )
 void MatrixKey::matrixMult8(  uint8_t *A, int *B, uint8_t *C, int N )
 {
     int i,j;
-    int tmp[N]={0};
-    //memset(tmp, 0, sizeof(int) * N);
+    int tmp[N];
+    memset(tmp, 0, sizeof(int) * N);
 
     //Multiply the key
     for(i = 0; i < N; ++i)
