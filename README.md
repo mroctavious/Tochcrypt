@@ -69,12 +69,14 @@ $ Tochcrypt -e PATH/TO/FILE -o PATH/TO/OUTPUT_NAME
 ```
 
 ### Decrypting
-To restore the file to t
+To restore the original file, it must go through a decryption process. To do this use the --decrypt(-d) and --key(-k) options, just execute the following command, replacing "PATH/TO/ENCRYPTED_FILE" with the path to your encrypted file, "PATH/TO/KEY_FILE" with the path to the key file(***.tochkey***) and "PATH/TO/OUTPUT_NAME" with the name of the output generated.
+The program will generate 1 output file:
+- OUTPUT_NAME
+  - Decrypted file. It is the original file.
 ```sh
 $ Tochcrypt -d PATH/TO/ENCRYPTED_FILE -k PATH/TO/KEY_FILE \ 
 -o PATH/TO/OUTPUT_NAME
 ```
-
 ### Using the shared library
 
 
@@ -88,7 +90,7 @@ License
 ----
 MIT License
 
-Copyright (c) 2019 Eric Octavio Rodríguez García
+Copyright (c) 2020 Eric Octavio Rodriguez Garcia
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -109,7 +111,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-**Free Software, Hell Yeah!**
+**FEED YOUR HEAD**
 [![N|Solid](https://tochcrypt.tk/static/img/coatlicue.png)](https://tochcrypt.tk/)
-
+***Coatlicue***
 

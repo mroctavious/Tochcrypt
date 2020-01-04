@@ -1,7 +1,6 @@
 #include "HillCipherProccess.h"
 extern "C"{
     void encrypt( char *input_file, char *output_file ){
-        printf("ARGS: <%s>   <%s> \n", input_file, output_file);
         HillCipherProccess HC;
         std::string out=output_file;
         HC.encrypt(input_file, out);
