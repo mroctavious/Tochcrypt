@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "Tochkey.h"
+#include <libgen.h>
 
 #ifndef MOD
 #define MOD 256
@@ -11,8 +12,12 @@ using namespace std;
 
 Tochkey::Tochkey(int *key, int key_size, string filename, size_t encryptedSize, int originalSize, string out_name ){
     //Preparando el encabezado del archivo
-    memset(&header, 0, sizeof(TFile));
-    strcpy(header.filename, filename.c_str());
+    memset(&header, 0, sizeof(TFile) );
+    char tmp[ filename.length() + 1 ];
+    tmp[ filename.length() ] = '\0';
+    strcpy(tmp, filename.c_str());
+    char *base=basename(tmp);
+    strcpy(header.filename, base);
     header.key_size = key_size;
     header.original_size = originalSize;
     header.encrypted_size = encryptedSize;
@@ -29,7 +34,7 @@ Tochkey::Tochkey(int *key, int key_size, string filename, size_t encryptedSize, 
     memcpy(main_key, key, sizeof(int)*keySize*keySize);
 
     //Abrir archivo
-    string out = out_name + ".key";
+    string out = out_name + ".tochkey";
     file_ptr=fopen(out.c_str(), "wb" );
     if( file_ptr != NULL ){
         
