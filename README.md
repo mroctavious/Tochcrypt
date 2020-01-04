@@ -77,8 +77,6 @@ The program will generate 1 output file:
 $ Tochcrypt -d PATH/TO/ENCRYPTED_FILE -k PATH/TO/KEY_FILE \ 
 -o PATH/TO/OUTPUT_NAME
 ```
-### Using the shared library
-
 
 ### Todos
 
