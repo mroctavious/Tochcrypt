@@ -23,6 +23,10 @@ default: TochcryptSeq
 
 cuda: Tochcrypt
 
+osx: TochcryptSeq
+
+shared: install
+
 clean:
 	rm -rf build 2>&1 > /dev/null
 	rm Tochcrypt 2>&1 > /dev/null
@@ -38,34 +42,34 @@ $(OBJ_DIR)/HillCipherCUDA.o: Directories
 	$(NVCC) -c -std=c++11 -Wall -Werror -fpic -o $(OBJ_DIR)/HillCipherCUDA.o $(SRC_DIR)/HillCipher.cu
 
 $(OBJ_DIR)/HillCipherProccess.o: Directories
-	$(CC) -c -std=c++11 -Wall -Werror -fpic -o $(OBJ_DIR)/HillCipherProccess.o $(SRC_DIR)/HillCipherProccess.cpp
+	$(CC) -c -std=c++11 -Wall -Werror -fpic -O3 -o $(OBJ_DIR)/HillCipherProccess.o $(SRC_DIR)/HillCipherProccess.cpp
 
 $(OBJ_DIR)/HillCipher.o: Directories
-	$(CC) -c -std=c++11  -Wall -Werror -fpic -o $(OBJ_DIR)/HillCipher.o $(SRC_DIR)/HillCipher.cpp
+	$(CC) -c -std=c++11  -Wall -Werror -fpic -O3 -o $(OBJ_DIR)/HillCipher.o $(SRC_DIR)/HillCipher.cpp
 
 $(OBJ_DIR)/MatrixKey.o: Directories
-	$(CC) -c -std=c++11  -Wall -Werror -fpic -o $(OBJ_DIR)/MatrixKey.o $(SRC_DIR)/MatrixKey.cpp
+	$(CC) -c -std=c++11  -Wall -Werror -fpic -O3 -o $(OBJ_DIR)/MatrixKey.o $(SRC_DIR)/MatrixKey.cpp
 
 $(OBJ_DIR)/Tochkey.o: Directories
-	$(CC) -c -std=c++11  -Wall -Werror -fpic -o $(OBJ_DIR)/Tochkey.o $(SRC_DIR)/Tochkey.cpp
+	$(CC) -c -std=c++11  -Wall -Werror -fpic -O3 -o $(OBJ_DIR)/Tochkey.o $(SRC_DIR)/Tochkey.cpp
 
 $(OBJ_DIR)/mainCUDA.o: Directories
-	$(NVCC) -c -std=c++11 -o $(OBJ_DIR)/mainCUDA.o $(SRC_DIR)/main.cu
+	$(NVCC) -c -std=c++11 -O3 -o $(OBJ_DIR)/mainCUDA.o $(SRC_DIR)/main.cu
 
 $(OBJ_DIR)/main.o: Directories
-	$(CC) -c -std=c++11  -Wall -Werror -fpic -o $(OBJ_DIR)/main.o $(SRC_DIR)/main.cpp
+	$(CC) -c -std=c++11  -Wall -Werror -fpic -O3 -o $(OBJ_DIR)/main.o $(SRC_DIR)/main.cpp
 
 Tochcrypt: $(OBJS_CUDA)
-	$(NVCC) -o Tochcrypt -std=c++11 $(OBJS_CUDA)
+	$(NVCC) -o Tochcrypt -std=c++11 -O3 $(OBJS_CUDA)
 
 TochcryptSeq: $(OBJS_SEQ)
-	$(CC) -o Tochcrypt -std=c++11 $(OBJS_SEQ)
+	$(CC) -o Tochcrypt -std=c++11 -O3 $(OBJS_SEQ)
 
 TOCHCRYPT_SHARED_LIB: $(STATIC_OBJS_SEQ)
 	$(CC) -shared -o $(SHRD_DIR)/libtochcrypt.so $(STATIC_OBJS_SEQ)
 	$(CC) -L$(SHRD_DIR) -std=c++11 -Wl,-rpath=$(SHRD_DIR) -Wall -o Tochcrypt $(SRC_DIR)/main.cpp -ltochcrypt 
 
-install: TOCHCRYPT_SHARED_LIB
+install pko: TOCHCRYPT_SHARED_LIB
 	install -d $(DESTDIR)$(PREFIX)/lib/
 	install -m 755 $(TOCHCRYPT_SHARED_LIB) $(DESTDIR)$(PREFIX)/lib/
 	install -d $(DESTDIR)$(PREFIX)/include/
@@ -73,3 +77,4 @@ install: TOCHCRYPT_SHARED_LIB
 	$(CC) -L$(DESTDIR)$(PREFIX)/lib/ -std=c++11 -Wl,-rpath=$(DESTDIR)$(PREFIX)/lib/ -Wall -o $(OBJ_DIR)/Tochcrypt $(SRC_DIR)/main.cpp -ltochcrypt
 	install -d $(DESTDIR)$(PREFIX)/bin/
 	install -m 755 $(OBJ_DIR)/Tochcrypt $(DESTDIR)$(PREFIX)/bin/
+
