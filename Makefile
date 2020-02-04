@@ -51,7 +51,7 @@ $(OBJ_DIR)/MatrixKey.o: Directories
 	$(CC) -c -std=c++11  -Wall -Werror -fpic -O3 -o $(OBJ_DIR)/MatrixKey.o $(SRC_DIR)/MatrixKey.cpp
 
 $(OBJ_DIR)/Tochkey.o: Directories
-	$(CC) -c -std=c++11  -Wall -Werror -fpic -O3 -o $(OBJ_DIR)/Tochkey.o $(SRC_DIR)/Tochkey.cpp
+	$(CC) -c -std=c++11  -Wall -fpic -O3 -o $(OBJ_DIR)/Tochkey.o $(SRC_DIR)/Tochkey.cpp
 
 $(OBJ_DIR)/mainCUDA.o: Directories
 	$(NVCC) -c -std=c++11 -O3 -o $(OBJ_DIR)/mainCUDA.o $(SRC_DIR)/main.cu
